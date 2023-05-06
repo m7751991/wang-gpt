@@ -1,0 +1,32 @@
+name: Build CI # Actions名称
+on:
+  # 触发workflow的动作形式，这里是手动触发
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+      - name: install nodejs
+        uses: actions/setup-node@v3.0.0
+        with:
+          node-version: "16.x"
+      # 安装依赖
+      - name: install
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm install
+      # 打包
+      - name: build project
+        run: npm run build
+      # 使用appleboy/ssh-action@master登录服务器执行拉取镜像脚本
+      - name: copy file via ssh
+        uses: appleboy/scp-action@master
+        with:
+          rm: true
+          source: "dist/*"
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          target: ${{secrets.REMOTE_PATH_GPT}}
