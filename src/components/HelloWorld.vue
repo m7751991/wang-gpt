@@ -20,12 +20,12 @@
 import { ElLoading } from 'element-plus'
  const config = {
     organization: 'org-3f09XtCUjvIwyefCFdXqUoTg',
-    apiKey: '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',
+    apiKey: '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',
   }
   const options = {
     model: 'text-davinci-003',
     temperature: 0,
-    max_tokens: 100,
+    max_tokens: 400,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
