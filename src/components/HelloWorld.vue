@@ -1,5 +1,8 @@
 <template>
 <div class="fd-window-box">
+  <div class="fd-window-box__key">
+    <el-input  v-model="form.apiKey"  />
+  </div>
    <div class="fd-window-box__context">
     请问有什么可以帮您？
     <template v-for="(item,index) in form.context"  :key="index">
@@ -40,7 +43,8 @@ const instance = axios.create({
 
 const form = reactive({
   information:'',
-  context:''
+  context:'',
+  apiKey:''
 })
 
 const sendFormData = () => {
@@ -48,7 +52,7 @@ const sendFormData = () => {
     lock: true,
     text: 'Loading',
     background: 'rgba(0, 0, 0, 0.7)',})
-  const data = { options: {...options,prompt:form.options},config };
+  const data = { options: {...options,prompt:form.options},config:{...config,apiKey:form.apiKey} };
   instance.post("/api/createCompletion", data)
     .then(response => {
       const {choices} = response.data.data;
@@ -83,5 +87,8 @@ const onEnter = ()=>{
   &__input{
   margin-top: 20px;
   }
+  &__key{
+  margin-bottom: 20px;
+}
 }
 </style>
