@@ -4,14 +4,10 @@
     <div class="fd-window-box">
       
       <div class="fd-window-box__context">
+        <h2>王答答</h2>
         <template v-for="(item,index) in form.qaList"  :key="index">
           <div style="white-space: pre-wrap;">
-            <div v-if="item.question" class="fd-window-box__question">{{ item.question }}</div>
-            <ul v-if="item.answer" class="fd-window-box__answer">
-              <li v-for="(aw, inx) in item.answer " :key="inx">
-                {{ aw }}
-              </li>
-            </ul>
+            <div  :class="item.role==='user'?'right':'left'" class='fd-window-box__message' >{{ item.content }}</div>
           </div>
         </template>
           
@@ -57,89 +53,17 @@
 
 
 <script setup>
-import { ElLoading } from 'element-plus'
-import {config, options, ROLE_LIST} from '../config';
-
-import { reactive } from 'vue'
-import axios from 'axios';
-const instance = axios.create({
-  baseURL: 'http://156.236.73.178:3005'
-})
-
-const form = reactive({
-  information:'',
-  qaList:[{
-   question:'',
-   answer:['我是一个聊天机器人，请问有什么问题问我？']
-  }],
-  question:'',
-  apiKey:'',
-  role:''
-})
-
-const useSendData = ()=>{
-    const sendFormData = () => {
-    form.messages = form.qaList.slice(1)
-    const lodaing = ElLoading.service({
-      lock: true,
-      text: 'Loading',
-      background: 'rgba(0, 0, 0, 0.7)',})
-      const data = { options: {...options,messages:form.messages},config:{...config,apiKey:form.apiKey} };
-      instance.post("/api/createCompletion", data)
-        .then(response => {
-          const {choices} = response.data.data;
-          form.qaList[form.qaList.length-1].answer = choices.map(item=>{
-          return item.message.content
-        })
-        lodaing.close()
-        })
-        .catch(error => {
-          lodaing.close()
-          console.error(error);
-        });
-    }
-
-  //   const generatorParams = () => {
-  //   const qaStrings = form.qaList.map(({ question, answer }) => `Q: ${question} A: ${answer}`)
-  //   return qaStrings.join('\n')
-  // }
-    const onEnter = ()=>{
-      form.qaList.push({
-        question: form.question,
-        answer:'',
-      })
-      sendFormData();
-    }
-
-
-  const setRole = ()=>{
-    form.qaList=[{
-        question:'',
-        answer:['我是一个聊天机器人，请问有什么问题问我？']
-      }],
-    form.qaList.push({
-        question: `接下来你的身份是${form.role},请用这个身份和我对话`,
-        answer:'',
-        role:'system'
-      })
-      sendFormData();
-  }
-    return {
-      setRole,
-      sendFormData,
-      onEnter
-    }
-}
-
-
-  const {onEnter,setRole} =  useSendData();
-
+import useSendData from '../hooks/useSendData';
+import {ROLE_LIST} from '../config';
+const {onEnter, setRole, form} =  useSendData();
 </script>
 
 <style lang="less">
 .fd-page{
+  // position: relative;
  display: flex;
  justify-content: center;
+//  padding-bottom: 40px;
 }
 .fd-window-box{
   width: 700px;
@@ -156,7 +80,7 @@ const useSendData = ()=>{
   margin-top: 20px;
   }
  
-  &__question{
+  &__message{
     margin:10px;
     text-align: right;
     background-color: gray;
@@ -164,14 +88,6 @@ const useSendData = ()=>{
     border-radius: 10px;
     color: #fff;
 
-  }
-  &__answer{
-    margin:10px;
-    text-align: left;
-    background-color: gray;
-    border-radius: 10px;
-    padding:8px;
-    color: #fff;
   }
 }
 .footer-tools{
@@ -190,5 +106,13 @@ const useSendData = ()=>{
       width: 200px;
     }
   }
+}
+
+.left{
+ text-align: left;
+}
+
+.right {
+text-align: right;
 }
 </style>
