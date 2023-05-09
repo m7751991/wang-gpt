@@ -10,36 +10,37 @@ export  default ()=>{
       question:'',
       apiKey:'',
       role:'',
-      roleObj:{},
+      roleObj:null,
       radioOption:1
     })
 
     const sliceCtx = ()=>{
-        let start = form.qaList.length>4?form.qaList.length-4:1
-        return [form.roleObj].concat(form.qaList.slice(start))
+        let start = form.qaList.length>4?form.qaList.length-4:0
+        const list = form.qaList.slice(start)
+        return form.roleObj ? [form.roleObj].concat(list) : list
     }
 
     const sendFormData = () => {
         form.messages = sliceCtx()
         const lodaing = ElLoading.service({
-        lock: true,
-        text: 'Loading',
-        background: 'rgba(0, 0, 0, 0.7)',})
+            lock: true,
+            text: 'Loading',
+            background: 'rgba(0, 0, 0, 0.7)',
+        })
         const data = { options: {...options,messages:form.messages},config:{...config,apiKey:form.apiKey} };
         axios.post("/api/createCompletion", data)
             .then(response => {
-            const {choices} = response.data.data;
-            form.qaList.push({
-               role:'assistant',
-               content:choices[0]?.message.content
-            })
-            lodaing.close()
-            })
-            .catch(error => {
-            lodaing.close()
-            console.error(error);
-            });
-        }
+              const {choices} = response.data.data;
+                form.qaList.push({
+                  role:'assistant',
+                  content:choices[0]?.message.content
+                })
+                lodaing.close()
+             }).catch(error => {
+                 lodaing.close()
+                console.error(error);
+              });
+     }
         const onEnter = ()=>{
         form.qaList.push({
             role:'user',
