@@ -10,7 +10,8 @@ export  default ()=>{
       question:'',
       apiKey:'',
       role:'',
-      roleObj:{}
+      roleObj:{},
+      radioOption:1
     })
 
     const sliceCtx = ()=>{
