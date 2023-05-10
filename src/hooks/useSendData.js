@@ -11,7 +11,8 @@ export  default ()=>{
       apiKey:'',
       role:'',
       roleObj:null,
-      radioOption:1
+      radioOption:1,
+      audioUrl:''
     })
 
     const sliceCtx = ()=>{
@@ -30,15 +31,18 @@ export  default ()=>{
         const data = { options: {...options,messages:form.messages},config:{...config,apiKey:form.apiKey} };
         axios.post("/api/createCompletion", data)
             .then(response => {
-              const {choices} = response.data.data;
+              const {data} = response.data;
                 form.qaList.push({
                   role:'assistant',
-                  content:choices[0]?.message.content
+                  content:data
                 })
                 lodaing.close()
+                setTimeout(()=>{
+                    getAudio()
+                },3000)
              }).catch(error => {
                  lodaing.close()
-                console.error(error);
+                 console.error(error);
               });
      }
         const onEnter = ()=>{
@@ -50,6 +54,13 @@ export  default ()=>{
         form.question = ''
     }
 
+    const getAudio = ()=>{
+      axios.get('/api/getAudio').then(res=>{
+         console.log(res.data);
+         form.audioUrl = res.data.url
+       }).catch(e=>{console.log(e);})
+    
+       }
 
     const setRole = ()=>{
         form.qaList=[],
@@ -61,6 +72,7 @@ export  default ()=>{
     }
         return {
          form,
+         getAudio,
          setRole,
          sendFormData,
          onEnter

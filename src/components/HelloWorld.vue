@@ -1,5 +1,6 @@
 <template>
   <div class="fd-page">
+
     <div class="fd-window-box">
       <div class="fd-window-box__context">
         <h2>王答答</h2>
@@ -60,6 +61,12 @@
       </div>
     </div>
   </el-drawer>
+
+  <audio controls autoplay  class="cusotmer-audio"  :src="form.audioUrl">
+     <source :src="form.audioUrl" >
+ </audio>
+ <!-- <el-button @click="getAudio"> 获取音频</el-button> -->
+ <!-- {{  form.audioUrl }} -->
 </div>
 
 </template>
@@ -143,5 +150,9 @@ const {onEnter, setRole, form} =  useSendData();
   position: absolute;
   top: 40px;
   right: 40px;
+ }
+
+ .cusotmer-audio{
+   display: none;
  }
 </style>
