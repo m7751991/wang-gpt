@@ -37,9 +37,7 @@ export  default ()=>{
                   content:data
                 })
                 lodaing.close()
-                setTimeout(()=>{
                     getAudio()
-                },3000)
              }).catch(error => {
                  lodaing.close()
                  console.error(error);
@@ -55,12 +53,21 @@ export  default ()=>{
     }
 
     const getAudio = ()=>{
-      axios.get('/api/getAudio').then(res=>{
-         console.log(res.data);
-         form.audioUrl = res.data.url
-       }).catch(e=>{console.log(e);})
-    
-       }
+        const fn =  ()=>{
+            axios.get('/api/getAudio').then(res=>{
+               console.log(res.data);
+               if (!res.data.url) {
+                setTimeout(()=>{
+                    fn()
+                },500)
+               }else{
+                   form.audioUrl = res.data.url+'?time='+ new Date().getTime()
+               }
+             }).catch(e=>{console.log(e);})
+          
+             }
+             fn()
+        }
 
     const setRole = ()=>{
         form.qaList=[],
