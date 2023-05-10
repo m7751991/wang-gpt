@@ -37,7 +37,7 @@ export  default ()=>{
                   content:data
                 })
                 lodaing.close()
-                    getAudio()
+                getAudio()
              }).catch(error => {
                  lodaing.close()
                  console.error(error);
