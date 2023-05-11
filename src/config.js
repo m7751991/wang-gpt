@@ -7,7 +7,7 @@ export  const options = {
     model: 'gpt-3.5-turbo',
     // model: 'text-davinci-003',
     temperature: 0.3,
-    max_tokens: 200,
+    max_tokens: 1000,
     top_p: 1,
     n:2,
     frequency_penalty: 0.3,
