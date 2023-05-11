@@ -31,11 +31,13 @@ export  default ()=>{
         const data = { options: {...options,messages:form.messages},config:{...config,apiKey:form.apiKey} };
         axios.post("/api/createCompletion", data)
             .then(response => {
-              const {data} = response.data;
+              const {content,audioUrl} = response.data.data;
+              
                 form.qaList.push({
                   role:'assistant',
-                  content:data
+                  content:content
                 })
+                form.audioUrl = audioUrl
                 lodaing.close()
                 // getAudio()
              }).catch(error => {
